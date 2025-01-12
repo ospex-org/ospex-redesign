@@ -34,3 +34,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# build images
+/buildimages
+
+# archive
+/archive
+
+# alternative project (imported into current)
+/altProject
