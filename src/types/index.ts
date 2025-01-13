@@ -27,6 +27,7 @@ export interface Contest {
   overOdds: number;
   underOdds: number;
   bets: ContestBet[];
+  poolSizes?: PoolSizes;
 }
 
 export interface ContestBet {
@@ -77,3 +78,19 @@ export interface User {
   description: string;
   recentBets: UserBet[];
 }
+
+export interface PoolSizes {
+  spread: {
+    away: number;
+    home: number;
+  };
+  moneyline: {
+    away: number;
+    home: number;
+  };
+  total: {
+    over: number;
+    under: number;
+  };
+}
+
