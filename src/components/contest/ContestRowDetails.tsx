@@ -25,22 +25,60 @@ const formatOdds = (odds: number) => {
 const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }) => {
   const router = useRouter();
 
-  // Add state to track selection
-  const [selectedValue, setSelectedValue] = React.useState("");
+  // Separate states for each bet type
+  const [spreadSelection, setSpreadSelection] = React.useState("");
+  const [moneylineSelection, setMoneylineSelection] = React.useState("");
+  const [totalSelection, setTotalSelection] = React.useState("");
   const [betAmount, setBetAmount] = React.useState(1);
   const [contributeAmount, setContributeAmount] = React.useState(0);
 
-  const handleChange = (value: string) => {
-    if (value === selectedValue) {
-      setSelectedValue("")
-    } else {
-      setSelectedValue(value)
+  // Get current selection based on active tab
+  const [activeTab, setActiveTab] = React.useState(0);
+  const getCurrentSelection = () => {
+    switch(activeTab) {
+      case 0: return spreadSelection;
+      case 1: return moneylineSelection;
+      case 2: return totalSelection;
+      default: return "";
     }
-  }
+  };
 
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    value: selectedValue,
-    onChange: handleChange
+  // Handle radio changes for each type
+  const handleSpreadChange = (value: string) => {
+    setSpreadSelection(value === spreadSelection ? "" : value);
+  };
+
+  const handleMoneylineChange = (value: string) => {
+    setMoneylineSelection(value === moneylineSelection ? "" : value);
+  };
+
+  const handleTotalChange = (value: string) => {
+    setTotalSelection(value === totalSelection ? "" : value);
+  };
+
+  // Create separate radio groups for each bet type
+  const {
+    getRootProps: getSpreadRootProps,
+    getRadioProps: getSpreadRadioProps
+  } = useRadioGroup({
+    value: spreadSelection,
+    onChange: handleSpreadChange
+  });
+
+  const {
+    getRootProps: getMoneylineRootProps,
+    getRadioProps: getMoneylineRadioProps
+  } = useRadioGroup({
+    value: moneylineSelection,
+    onChange: handleMoneylineChange
+  });
+
+  const {
+    getRootProps: getTotalRootProps,
+    getRadioProps: getTotalRadioProps
+  } = useRadioGroup({
+    value: totalSelection,
+    onChange: handleTotalChange
   });
 
   return (
@@ -74,7 +112,7 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
 
         {/* Right side: Betting interface */}
         <Box width="55%" position="relative">
-          <Tabs variant="soft-rounded" colorScheme="blue" orientation="vertical">
+          <Tabs variant="soft-rounded" colorScheme="blue" orientation="vertical" onChange={(index) => setActiveTab(index)}>
             <Flex gap={6}>
               {/* Button list - moved more to center */}
               <TabList 
@@ -150,9 +188,9 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                       p={0}
                       height="100%"
                     >
-                      <VStack {...getRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
+                      <VStack {...getSpreadRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
                         <RadioCard
-                          {...getRadioProps({ value: 'spread_away' })}
+                          {...getSpreadRadioProps({ value: 'spread_away' })}
                           label={`${contest.awayTeam} ${formatSpread(contest.awaySpread)}`}
                           description={`Current Odds: ${formatOdds(contest.awaySpreadOdds)}`}
                           teamColor={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
@@ -160,7 +198,7 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                             getTeamColor(contest.awayTeam)}
                         />
                         <RadioCard
-                          {...getRadioProps({ value: 'spread_home' })}
+                          {...getSpreadRadioProps({ value: 'spread_home' })}
                           label={`${contest.homeTeam} ${formatSpread(contest.homeSpread)}`}
                           description={`Current Odds: ${formatOdds(contest.homeSpreadOdds)}`}
                           teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
@@ -177,6 +215,8 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                       width="240px"
                       height="100%"
                       ml={2}
+                      borderRadius="md"
+                      alignContent="center"
                     >
                       {/* [1] Amount Selector */}
                       <Box>
@@ -226,6 +266,12 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         bg="gray.700"
                         color="white"
                         _hover={{ bg: 'gray.600' }}
+                        _disabled={{
+                          bg: 'gray.900',
+                          opacity: 0.7,
+                          cursor: 'not-allowed'
+                        }}
+                        isDisabled={!spreadSelection}
                       >
                         Place Bet
                       </Button>
@@ -270,16 +316,16 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                     </Box>
                     
                     <Box flex="1" p={0} height="100%">
-                      <VStack {...getRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
+                      <VStack {...getMoneylineRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
                         <RadioCard
-                          {...getRadioProps({ value: 'moneyline_away' })}
+                          {...getMoneylineRadioProps({ value: 'moneyline_away' })}
                           label={`${contest.awayTeam}`}
                           description={`Current Odds: ${formatOdds(contest.awayMoneyline)}`}
                           teamColor={getTeamColor(contest.awayTeam)}
                           secondaryColor={NFL_TEAMS[contest.awayTeam]?.secondary}
                         />
                         <RadioCard
-                          {...getRadioProps({ value: 'moneyline_home' })}
+                          {...getMoneylineRadioProps({ value: 'moneyline_home' })}
                           label={`${contest.homeTeam}`}
                           description={`Current Odds: ${formatOdds(contest.homeMoneyline)}`}
                           teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
@@ -296,6 +342,8 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                       width="240px"
                       height="100%"
                       ml={2}
+                      borderRadius="md"
+                      alignContent="center"
                     >
                       {/* [1] Amount Selector */}
                       <Box>
@@ -345,6 +393,12 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         bg="gray.700"
                         color="white"
                         _hover={{ bg: 'gray.600' }}
+                        _disabled={{
+                          bg: 'gray.900',
+                          opacity: 0.7,
+                          cursor: 'not-allowed'
+                        }}
+                        isDisabled={!moneylineSelection}
                       >
                         Place Bet
                       </Button>
@@ -385,15 +439,15 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                     </Box>
                     
                     <Box flex="1" p={0} height="100%">
-                      <VStack {...getRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
+                      <VStack {...getTotalRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
                         <RadioCard
-                          {...getRadioProps({ value: 'total_over' })}
+                          {...getTotalRadioProps({ value: 'total_over' })}
                           label={`Over ${contest.total}`}
                           description={`Current Odds: ${formatOdds(contest.overOdds)}`}
                           teamColor={BETTING_COLORS.OVER}
                         />
                         <RadioCard
-                          {...getRadioProps({ value: 'total_under' })}
+                          {...getTotalRadioProps({ value: 'total_under' })}
                           label={`Under ${contest.total}`}
                           description={`Current Odds: ${formatOdds(contest.underOdds)}`}
                           teamColor={BETTING_COLORS.UNDER}
@@ -408,6 +462,8 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                       width="240px"
                       height="100%"
                       ml={2}
+                      borderRadius="md"
+                      alignContent="center"
                     >
                       {/* [1] Amount Selector */}
                       <Box>
@@ -457,6 +513,12 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         bg="gray.700"
                         color="white"
                         _hover={{ bg: 'gray.600' }}
+                        _disabled={{
+                          bg: 'gray.900',
+                          opacity: 0.7,
+                          cursor: 'not-allowed'
+                        }}
+                        isDisabled={!totalSelection}
                       >
                         Place Bet
                       </Button>

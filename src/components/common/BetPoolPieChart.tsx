@@ -27,10 +27,10 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
   teamBName = ''
 }) => {
   const data = {
-    labels: [teamAName, teamBName],
+    labels: [teamBName, teamAName],
     datasets: [{
-      data: [poolSizeA, poolSizeB],
-      backgroundColor: [colorA, colorB],
+      data: [poolSizeB, poolSizeA],
+      backgroundColor: [colorB, colorA],
       borderWidth: 1,
       borderColor: 'black'
     }]
@@ -38,6 +38,9 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
 
   const options = {
     plugins: {
+      legend: {
+        display: false
+      },
       tooltip: {
         enabled: true,
         callbacks: {
