@@ -168,12 +168,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
@@ -194,12 +188,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
@@ -286,12 +274,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
@@ -312,12 +294,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
@@ -404,12 +380,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
@@ -430,12 +400,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                           step={1}
                           bg="gray.900"
                           borderRadius="md"
-                          sx={{
-                            '& .chakra-numberinput__stepper': {
-                              color: 'gray.400',
-                              _hover: { color: 'white' }
-                            }
-                          }}
                         >
                           <NumberInputField />
                           <NumberInputStepper>
