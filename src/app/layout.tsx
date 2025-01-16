@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible } from 'next/font/google';
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import StatsBar from '@/components/layout/StatsBar'
 import Header from '@/components/layout/Header'
 import { Box } from '@chakra-ui/react'
@@ -27,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={atkinsonHyperlegible.className}>
+        <ColorModeScript initialColorMode="dark" />
         <ChakraProvider>
           <Box bg="black" minHeight="100vh">
             <StatsBar />
