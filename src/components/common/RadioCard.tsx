@@ -1,15 +1,19 @@
 import { Box, useRadio, UseRadioProps, VStack } from '@chakra-ui/react'
 import React from 'react'
+import { getBetTypeColor } from '@/constants/teamColors'
 
 interface RadioCardProps extends UseRadioProps {
   label: string
   description?: string
+  teamColor?: string
+  secondaryColor?: string
 }
 
 export const RadioCard = (props: RadioCardProps) => {
   const { getInputProps, getRadioProps, state } = useRadio(props)
   const input = getInputProps()
   const checkbox = getRadioProps()
+  const [isHovered, setIsHovered] = React.useState(false)
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault() // Prevent default radio behavior
@@ -25,14 +29,6 @@ export const RadioCard = (props: RadioCardProps) => {
     }
   }
 
-  const getButtonColor = (value: string) => {
-    // For spread and moneyline, use team colors
-    if (value.includes('away') || value === 'total_over') {
-      return '#4ECDC4'  // turquoise for away team and over
-    }
-    return '#FF6B6B'    // pink for home team and under
-  }
-
   return (
     <Box 
       as="label" 
@@ -40,6 +36,8 @@ export const RadioCard = (props: RadioCardProps) => {
       onClick={handleClick}
       position="relative"
       transition="all 0.2s"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <input {...input} style={{ display: 'none' }} />
       <Box
@@ -57,12 +55,12 @@ export const RadioCard = (props: RadioCardProps) => {
         alignItems="center"
         transition="all 0.2s"
         _hover={{
-          borderColor: props.value === 'away' ? '#4ECDC4' : '#FF6B6B',
-          boxShadow: `0 0 0 1px ${props.value === 'away' ? '#4ECDC4' : '#FF6B6B'}`
+          borderColor: props.teamColor || getBetTypeColor(props.value as 'away' | 'home' | 'over' | 'under'),
+          boxShadow: `0 0 0 1px ${props.teamColor || getBetTypeColor(props.value as 'away' | 'home' | 'over' | 'under')}`
         }}
         _checked={{
-          borderColor: props.value === 'away' ? '#4ECDC4' : '#FF6B6B',
-          boxShadow: `0 0 0 2px ${props.value === 'away' ? '#4ECDC4' : '#FF6B6B'}`
+          borderColor: props.teamColor || getBetTypeColor(props.value as 'away' | 'home' | 'over' | 'under'),
+          boxShadow: `0 0 0 2px ${props.teamColor || getBetTypeColor(props.value as 'away' | 'home' | 'over' | 'under')}`
         }}
       >
         <VStack 
@@ -71,6 +69,9 @@ export const RadioCard = (props: RadioCardProps) => {
           width="100%"
           overflow="hidden"
           margin="0"
+          opacity={isHovered ? 1 :
+            (!props.value ? 1 :
+              state.isChecked ? 1 : 0.7)}
         >
           <Box 
             fontWeight="bold"

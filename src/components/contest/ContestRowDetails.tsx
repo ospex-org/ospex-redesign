@@ -7,11 +7,20 @@ import { useRouter } from 'next/navigation';
 import { RadioCard } from '../common/RadioCard';
 import { useRadioGroup, VStack } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
+import { getTeamColor, NFL_TEAMS, BETTING_COLORS } from '@/constants/teamColors';
 
 interface ContestRowDetailsProps {
   contest: Contest;
   isOpen: boolean;
 }
+
+const formatSpread = (spread: number) => {
+  return spread > 0 ? `+${spread}` : spread;
+};
+
+const formatOdds = (odds: number) => {
+  return odds > 0 ? `+${odds}` : odds;
+};
 
 const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }) => {
   const router = useRouter();
@@ -22,7 +31,6 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
   const [contributeAmount, setContributeAmount] = React.useState(0);
 
   const handleChange = (value: string) => {
-    console.log('RadioGroup onChange:', value)
     if (value === selectedValue) {
       setSelectedValue("")
     } else {
@@ -125,6 +133,14 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         poolSizeA={contest.poolSizes?.spread.away || 0}
                         poolSizeB={contest.poolSizes?.spread.home || 0}
                         size="100px"
+                        colorA={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
+                          NFL_TEAMS[contest.awayTeam].secondary : 
+                          getTeamColor(contest.awayTeam)}
+                        colorB={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
+                          NFL_TEAMS[contest.homeTeam].secondary : 
+                          getTeamColor(contest.homeTeam)}
+                        teamAName={contest.awayTeam}
+                        teamBName={contest.homeTeam}
                       />
                     </Box>
                     
@@ -136,14 +152,20 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                     >
                       <VStack {...getRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
                         <RadioCard
-                          {...getRadioProps({ value: 'away' })}
-                          label={`${contest.awayTeam} -2.5`}
-                          description="Current Odds: -110"
+                          {...getRadioProps({ value: 'spread_away' })}
+                          label={`${contest.awayTeam} ${formatSpread(contest.awaySpread)}`}
+                          description={`Current Odds: ${formatOdds(contest.awaySpreadOdds)}`}
+                          teamColor={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
+                            NFL_TEAMS[contest.awayTeam].secondary : 
+                            getTeamColor(contest.awayTeam)}
                         />
                         <RadioCard
-                          {...getRadioProps({ value: 'home' })}
-                          label={`${contest.homeTeam} +2.5`}
-                          description="Current Odds: -110"
+                          {...getRadioProps({ value: 'spread_home' })}
+                          label={`${contest.homeTeam} ${formatSpread(contest.homeSpread)}`}
+                          description={`Current Odds: ${formatOdds(contest.homeSpreadOdds)}`}
+                          teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
+                            NFL_TEAMS[contest.homeTeam].secondary : 
+                            getTeamColor(contest.homeTeam)}
                         />
                       </VStack>
                     </Box>
@@ -236,6 +258,14 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         poolSizeA={contest.poolSizes?.moneyline.away || 0}
                         poolSizeB={contest.poolSizes?.moneyline.home || 0}
                         size="100px"
+                        colorA={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
+                          NFL_TEAMS[contest.awayTeam].secondary : 
+                          getTeamColor(contest.awayTeam)}
+                        colorB={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
+                          NFL_TEAMS[contest.homeTeam].secondary : 
+                          getTeamColor(contest.homeTeam)}
+                        teamAName={contest.awayTeam}
+                        teamBName={contest.homeTeam}
                       />
                     </Box>
                     
@@ -244,12 +274,17 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         <RadioCard
                           {...getRadioProps({ value: 'moneyline_away' })}
                           label={`${contest.awayTeam}`}
-                          description="Current Odds: +110"
+                          description={`Current Odds: ${formatOdds(contest.awayMoneyline)}`}
+                          teamColor={getTeamColor(contest.awayTeam)}
+                          secondaryColor={NFL_TEAMS[contest.awayTeam]?.secondary}
                         />
                         <RadioCard
                           {...getRadioProps({ value: 'moneyline_home' })}
                           label={`${contest.homeTeam}`}
-                          description="Current Odds: -130"
+                          description={`Current Odds: ${formatOdds(contest.homeMoneyline)}`}
+                          teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
+                            NFL_TEAMS[contest.homeTeam].secondary : 
+                            getTeamColor(contest.homeTeam)}
                         />
                       </VStack>
                     </Box>
@@ -342,6 +377,10 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         poolSizeA={contest.poolSizes?.total.over || 0}
                         poolSizeB={contest.poolSizes?.total.under || 0}
                         size="100px"
+                        colorA={BETTING_COLORS.OVER}
+                        colorB={BETTING_COLORS.UNDER}
+                        teamAName="Over"
+                        teamBName="Under"
                       />
                     </Box>
                     
@@ -350,12 +389,14 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                         <RadioCard
                           {...getRadioProps({ value: 'total_over' })}
                           label={`Over ${contest.total}`}
-                          description="Current Odds: -110"
+                          description={`Current Odds: ${formatOdds(contest.overOdds)}`}
+                          teamColor={BETTING_COLORS.OVER}
                         />
                         <RadioCard
                           {...getRadioProps({ value: 'total_under' })}
                           label={`Under ${contest.total}`}
-                          description="Current Odds: -110"
+                          description={`Current Odds: ${formatOdds(contest.underOdds)}`}
+                          teamColor={BETTING_COLORS.UNDER}
                         />
                       </VStack>
                     </Box>
