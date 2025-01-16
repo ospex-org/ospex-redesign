@@ -14,6 +14,12 @@ const atkinsonHyperlegible = Atkinson_Hyperlegible({
   display: 'swap',
 })
 
+// Simple config object that won't cause serialization issues
+const config = {
+  initialColorMode: 'dark',
+  useSystemColorMode: false,
+} as const;
+
 export const metadata: Metadata = {
   title: "ospex.org",
   description: "Open Speculation Exchange",
@@ -25,9 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <body className={atkinsonHyperlegible.className}>
-        <ColorModeScript initialColorMode="dark" />
+        <ColorModeScript initialColorMode={config.initialColorMode} />
         <ChakraProvider>
           <Box bg="black" minHeight="100vh">
             <StatsBar />
