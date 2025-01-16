@@ -36,16 +36,8 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
   };
 
   return (
-    <Box 
-      display="flex" 
-      alignItems="center" 
-      justifyContent="center"
-      height="100%"
-      width="100%"
-    >
-      <Box width={size} height={size}>
-        <Pie data={data} options={options} />
-      </Box>
+    <Box width={size} height={size}>
+      <Pie data={data} options={options} />
     </Box>
   );
 };
