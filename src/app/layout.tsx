@@ -32,7 +32,7 @@ export default function RootLayout({
             <StatsBar />
             <Header />
             <MenuBar />
-              {children}
+            {children}
           </Box>
         </ChakraProvider>
       </body>

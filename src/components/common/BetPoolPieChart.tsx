@@ -1,28 +1,20 @@
 import React from 'react';
-import { Box, Tooltip } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip as ChartTooltip } from 'chart.js';
+import { Chart as ChartJS, ArcElement } from 'chart.js';
 
-ChartJS.register(ArcElement, ChartTooltip);
+ChartJS.register(ArcElement);
 
 interface BetPoolPieChartProps {
   poolSizeA: number;
   poolSizeB: number;
-  labelA: string;
-  labelB: string;
-  oddsA: number;
-  oddsB: number;
   size?: string;
 }
 
 const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
   poolSizeA,
   poolSizeB,
-  labelA,
-  labelB,
-  oddsA,
-  oddsB,
-  size = '40px'
+  size = '80px'
 }) => {
   const data = {
     datasets: [{
@@ -43,17 +35,10 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
     maintainAspectRatio: true
   };
 
-  const tooltipContent = `
-    ${labelA}: $${poolSizeA} (${oddsA})
-    ${labelB}: $${poolSizeB} (${oddsB})
-  `;
-
   return (
-    <Tooltip label={tooltipContent} hasArrow>
-      <Box width={size} height={size}>
-        <Pie data={data} options={options} />
-      </Box>
-    </Tooltip>
+    <Box width={size} height={size}>
+      <Pie data={data} options={options} />
+    </Box>
   );
 };
 

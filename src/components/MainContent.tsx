@@ -10,9 +10,12 @@ const MainContent = () => {
   return (
     <Box maxWidth="1400px" margin="0 auto" padding="1rem" width="calc(100% - 15px)">
       <Box mb={4} pt={4}>
-        <Heading as="h1" size="xl" mb={4} color="white">
+        {/* <Heading as="h1" size="xl" mb={4} color="white">
+          Commission-Free Sports Betting using Parimutuel Pools 000
+        </Heading> */}
+        <Text fontSize="4xl" fontWeight="bold" color="white" mb={4}>
           Commission-Free Sports Betting using Parimutuel Pools
-        </Heading>
+        </Text>
         <Flex justifyContent="space-between" alignItems="center">
           <Text color="gray.300" flex="1">
             Connect with your crypto wallet: no sign-up, no vig, 100 USDC bet limits to be removed post contract-audit.
