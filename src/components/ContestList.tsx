@@ -109,9 +109,13 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
 
   return (
     <Box overflowX="auto" width="100%">
-      <Table variant="simple" color="white" size="sm">
+      <Table variant="simple" color="white" size="sm" sx={{
+        'th, td': {
+          borderColor: 'gray.800'
+        }
+      }}>
         <Thead>
-          <Tr borderBottom="2px solid" borderColor="gray.700">
+          <Tr borderBottom="2px solid" borderColor="gray.800">
             <Th color="gray.300" width="2%"></Th>
             <Th color="gray.300" width="10%">Date/Time</Th>
             <Th color="gray.300" width="8%">League</Th>
@@ -156,7 +160,13 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                   </Box>
                 </Td>
                 <Td width="8%" py={3}>
-                  <Badge colorScheme={getLeagueColor(contest.league)}>{contest.league}</Badge>
+                  <Badge 
+                    bg="gray.800"
+                    color="white"
+                    variant="solid"
+                  >
+                    NFL
+                  </Badge>
                 </Td>
                 <Td width="28%" py={3}>
                   <Box>
