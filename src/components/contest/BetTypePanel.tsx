@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, VStack } from '@chakra-ui/react';
+import { Box, Flex, VStack, useBreakpointValue } from '@chakra-ui/react';
 import { RadioCard } from '../common/RadioCard';
 import BetPoolPieChart from '../common/BetPoolPieChart';
 import BettingInterface from './BettingInterface';
@@ -31,6 +31,8 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
   contributeAmount,
   setContributeAmount,
 }) => {
+  const showVisualization = useBreakpointValue({ base: false, md: true });
+
   const getPieChartProps = () => {
     switch (type) {
       case 'spread':
@@ -135,29 +137,37 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
     }
   };
 
-  const pieChartProps = getPieChartProps();
-
   return (
-    <Flex align="center" height="100%" gap={4}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height="100%"
-        minWidth="100px"
-      >
-        <BetPoolPieChart
-          {...pieChartProps}
-          size="100px"
-        />
-      </Box>
-
+    <Flex 
+      align="center" 
+      height="100%" 
+      gap={4}
+      sx={{
+        '@media screen and (max-width: 618px)': {
+          flexDirection: 'column',
+          gap: 2
+        }
+      }}
+    >
+      {showVisualization && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          minWidth="100px"
+        >
+          <BetPoolPieChart
+            {...getPieChartProps()}
+            size="100px"
+          />
+        </Box>
+      )}
       <Box flex="1" p={0} height="100%">
         <VStack {...radioProps.getRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
           {getRadioCards()}
         </VStack>
       </Box>
-
       <BettingInterface
         betAmount={betAmount}
         setBetAmount={setBetAmount}

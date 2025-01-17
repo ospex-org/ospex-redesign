@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Badge, Text, Flex } from '@chakra-ui/react'
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Badge, Text, Flex, useBreakpointValue } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { Contest } from '../types'
 import { useRouter } from 'next/navigation'
@@ -69,6 +69,10 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const router = useRouter();
+  const dateFormat = useBreakpointValue({ 
+    base: 'short',  // e.g. "09-10"
+    lg: 'long'      // e.g. "2023-09-10"
+  });
 
   const handleRowClick = (index: number) => {
     setExpandedRow(expandedRow === index ? null : index);
@@ -93,6 +97,26 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
       total: roundedTotal
     });
   }, [updateContest]);
+
+  const formatDate = (date: string, time: string) => {
+    if (dateFormat === 'short') {
+      // Convert from "2023-09-10" to "09-10"
+      const shortDate = date.split('-').slice(1).join('-');
+      return (
+        <Box>
+          <Text>{shortDate}</Text>
+          <Text>{time}</Text>
+        </Box>
+      );
+    }
+    
+    return (
+      <Box>
+        <Text>{date}</Text>
+        <Text>{time} EST</Text>
+      </Box>
+    );
+  };
 
   useEffect(() => {
     const loadContests = async () => {
@@ -205,10 +229,7 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                   />
                 </Td>
                 <Td width={{ base: "8%", xl: "10%" }} py={3}>
-                  <Box>
-                    <Text>{contest.date}</Text>
-                    <Text>{contest.time} EST</Text>
-                  </Box>
+                  {formatDate(contest.date, contest.time)}
                 </Td>
                 <Td width={{ base: "6%", xl: "8%" }} py={3}>
                   <Badge colorScheme={getLeagueColor(contest.league)}>{contest.league}</Badge>

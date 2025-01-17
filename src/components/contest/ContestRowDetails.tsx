@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
+import { Box, Flex, Tabs, TabList, Tab, TabPanels, TabPanel, useBreakpointValue } from '@chakra-ui/react';
 import { Contest } from '../../types';
 import BetTypePanel from './BetTypePanel';
 import { useRadioGroup } from '@chakra-ui/react';
@@ -34,10 +34,51 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
     onChange: (value) => setTotalSelection(value === totalSelection ? "" : value)
   });
 
+  const slideoutHeight = useBreakpointValue({
+    base: '144px',
+    '@media screen and (max-width: 618px)': '200px',
+    '@media screen and (max-width: 400px)': '250px'
+  });
+
+  const tabLabels = useBreakpointValue({
+    base: [
+      { label: 'Spread' },
+      { label: 'Moneyline' },
+      { label: 'Total' }
+    ],
+    '@media screen and (max-width: 400px)': [
+      { label: 'Spread' },
+      { label: 'ML' },
+      { label: 'Total' }
+    ]
+  }) || [
+    { label: 'Spread' },
+    { label: 'Moneyline' },
+    { label: 'Total' }
+  ];
+
+  const isMobile = useBreakpointValue({ base: true, sm: false });
+
+  const getButtonLabel = (label: string) => {
+    if (isMobile && label === 'Moneyline') {
+      return 'ML';
+    }
+    return label;
+  };
+
   return (
     <Box
-      height={isOpen ? '144px' : '0'}
-      transition="height 0.3s ease-in-out"
+      sx={{
+        '--slideout-height': '144px',
+        '@media screen and (max-width: 618px)': {
+          '--slideout-height': '240px'
+        },
+        '@media screen and (max-width: 400px)': {
+          '--slideout-height': '280px'
+        },
+        height: isOpen ? 'var(--slideout-height)' : '0',
+        transition: 'height 0.3s ease-in-out'
+      }}
       overflow="hidden"
       bg="black"
       position="relative"
@@ -87,10 +128,15 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
             orientation="vertical" 
             onChange={setActiveTab}
             sx={{
-              marginLeft: '-2rem',
+              marginLeft: { base: 0, md: '-2rem' },
               '.chakra-tabs__tablist': {
                 marginLeft: 0,
                 paddingLeft: 0
+              },
+              '@media screen and (max-width: 400px)': {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2
               }
             }}
           >
@@ -98,6 +144,11 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
               gap={{ base: 2, xl: 6 }}
               ml={0}
               pl={0}
+              sx={{
+                '@media screen and (max-width: 400px)': {
+                  flexDirection: 'column'
+                }
+              }}
             >
               <TabList 
                 flexDirection="column" 
@@ -105,6 +156,19 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                 width={{ base: "100px", xl: "120px" }}
                 ml={0}
                 pl={0}
+                sx={{
+                  '@media screen and (max-width: 400px)': {
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    gap: 1,
+                    mb: 2,
+                    '& > *': {
+                      marginLeft: '2px',
+                      marginRight: '2px'
+                    }
+                  }
+                }}
               >
                 {['Spread', 'Moneyline', 'Total'].map((label) => (
                   <Tab 
@@ -116,8 +180,21 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
                       bg: 'gray.700',
                       color: 'white' 
                     }}
+                    sx={{
+                      '@media screen and (max-width: 400px)': {
+                        flex: '0 0 auto',
+                        minWidth: '50px',
+                        maxWidth: '60px',
+                        justifyContent: 'center',
+                        px: 1,
+                        py: 1,
+                        fontSize: 'sm'
+                      }
+                    }}
                   >
-                    {label}
+                    <Box>
+                      {getButtonLabel(label)}
+                    </Box>
                   </Tab>
                 ))}
               </TabList>
@@ -125,6 +202,14 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
               <TabPanels 
                 width={{ base: "calc(100% - 110px)", xl: "calc(100% - 140px)" }}
                 pl={0}
+                sx={{
+                  '@media screen and (max-width: 400px)': {
+                    width: '100%',
+                    pl: 0,
+                    pr: 0,
+                    mx: 0  // Remove any margin
+                  }
+                }}
               >
                 <TabPanel 
                   p={0} 
