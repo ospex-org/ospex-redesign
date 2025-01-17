@@ -40,10 +40,10 @@ const bounceUpKeyframes = keyframes`
   }
 `;
 
-const AnimatedChevron = ({ 
-  side, 
-  isRowExpanded 
-}: { 
+const AnimatedChevron = ({
+  side,
+  isRowExpanded
+}: {
   side: 'left' | 'right' | 'center';
   isRowExpanded: boolean;
 }) => (
@@ -112,17 +112,66 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
       <Table variant="simple" color="white" size="sm">
         <Thead>
           <Tr borderBottom="2px solid" borderColor="gray.700">
-            <Th color="gray.300" width="2%"></Th>
-            <Th color="gray.300" width="10%">Date/Time</Th>
-            <Th color="gray.300" width="8%">League</Th>
-            <Th color="gray.300" width="28%">Teams</Th>
-            <Th color="gray.300" width="2%"></Th>
-            <Th color="gray.300" textAlign="right" width="10%">Spread</Th>
-            <Th color="gray.300" textAlign="right" width="10%">Spread Pools</Th>
-            <Th color="gray.300" textAlign="right" width="10%">Moneyline Pools</Th>
-            <Th color="gray.300" textAlign="right" width="10%">Total</Th>
-            <Th color="gray.300" textAlign="right" width="8%">Total Pools</Th>
-            <Th color="gray.300" width="2%"></Th>
+            <Th 
+              color="gray.300" 
+              width={{ base: "1%", xl: "2%" }} 
+              px={{ base: 1, xl: 3 }}
+            ></Th>
+            <Th 
+              color="gray.300" 
+              width={{ base: "8%", xl: "10%" }}
+              px={{ base: 1, xl: 3 }}
+            >Date/Time</Th>
+            <Th 
+              color="gray.300" 
+              width={{ base: "6%", xl: "8%" }}
+              px={{ base: 1, xl: 3 }}
+            >League</Th>
+            <Th 
+              color="gray.300"
+              width={{ base: "24%", xl: "28%" }}
+              px={{ base: 1, xl: 3 }}
+            >Teams</Th>
+            <Th
+              color="gray.300"
+              width={{ base: "1%", xl: "2%" }}
+              px={{ base: 1, xl: 3 }}
+            ></Th>
+            <Th
+              color="gray.300"
+              textAlign="right"
+              width={{ base: "8%", xl: "10%" }}
+              px={{ base: 1, xl: 3 }}
+            >Spread</Th>
+            <Th
+              color="gray.300" 
+              textAlign="right" 
+              width={{ base: "8%", xl: "10%" }}
+              px={{ base: 1, xl: 3 }}
+            >Spread Pools</Th>
+            <Th
+              color="gray.300"
+              textAlign="right"
+              width={{ base: "8%", xl: "10%" }}
+              px={{ base: 1, xl: 3 }}
+            >ML Pools</Th>
+            <Th
+              color="gray.300"
+              textAlign="right"
+              width={{ base: "8%", xl: "10%" }}
+              px={{ base: 1, xl: 3 }}
+            >Total</Th>
+            <Th 
+              color="gray.300" 
+              textAlign="right" 
+              width={{ base: "6%", xl: "8%" }}
+              px={{ base: 1, xl: 3 }}
+            >Total Pools</Th>
+            <Th 
+              color="gray.300"
+              width={{ base: "1%", xl: "2%" }}
+              px={{ base: 1, xl: 3 }}
+            ></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -142,23 +191,29 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                 borderColor="gray.600"
                 role="group"
                 position="relative"
+                sx={{
+                  'td': {
+                    px: { base: 1, xl: 3 },
+                    py: { base: 2, xl: 3 }
+                  }
+                }}
               >
-                <Td p={0} width="2%">
-                  <AnimatedChevron 
-                    side="left" 
+                <Td p={0} width={{ base: "1%", xl: "2%" }}>
+                  <AnimatedChevron
+                    side="left"
                     isRowExpanded={expandedRow === index}
                   />
                 </Td>
-                <Td width="10%" py={3}>
+                <Td width={{ base: "8%", xl: "10%" }} py={3}>
                   <Box>
                     <Text>{contest.date}</Text>
                     <Text>{contest.time} EST</Text>
                   </Box>
                 </Td>
-                <Td width="8%" py={3}>
+                <Td width={{ base: "6%", xl: "8%" }} py={3}>
                   <Badge colorScheme={getLeagueColor(contest.league)}>{contest.league}</Badge>
                 </Td>
-                <Td width="28%" py={3}>
+                <Td width={{ base: "24%", xl: "28%" }} py={3}>
                   <Box>
                     <Text>{contest.awayTeam}</Text>
                     <Text>{contest.homeTeam}</Text>
@@ -179,13 +234,13 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                     <Box width="20px" height="20px" />
                   )}
                 </Td> */}
-                <Td p={0} width="2%">
-                  <AnimatedChevron 
-                    side="center" 
+                <Td p={0} width={{ base: "1%", xl: "2%" }}>
+                  <AnimatedChevron
+                    side="center"
                     isRowExpanded={expandedRow === index}
                   />
                 </Td>
-                <Td textAlign="right" width="10%" py={3}>
+                <Td textAlign="right" width={{ base: "8%", xl: "10%" }} py={3}>
                   <Box>
                     <Text>{formatSpread(contest.awaySpread)}</Text>
                     <Text>{formatSpread(-contest.awaySpread)}</Text>
@@ -206,13 +261,13 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                     <Box width="20px" height="20px" />
                   )}
                 </Td> */}
-                <Td textAlign="right" width="10%" py={3}>
+                <Td textAlign="right" width={{ base: "8%", xl: "10%" }} py={3}>
                   <Box>
                     <Text>{formatCurrency(contest.poolSizes?.spread.away || 0)}</Text>
                     <Text>{formatCurrency(contest.poolSizes?.spread.home || 0)}</Text>
                   </Box>
                 </Td>
-                <Td textAlign="right" width="10%" py={3}>
+                <Td textAlign="right" width={{ base: "8%", xl: "10%" }} py={3}>
                   <Box>
                     <Text>{formatCurrency(contest.poolSizes?.moneyline.away || 0)}</Text>
                     <Text>{formatCurrency(contest.poolSizes?.moneyline.home || 0)}</Text>
@@ -233,7 +288,7 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                     <Box width="20px" height="20px" />
                   )}
                 </Td> */}
-                <Td textAlign="right" width="10%" py={3}>
+                <Td textAlign="right" width={{ base: "8%", xl: "10%" }} py={3}>
                   <Text>{contest.total}</Text>
                 </Td>
                 {/* <Td width="3%" pl={0}>
@@ -251,22 +306,22 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                     <Box width="20px" height="20px" />
                   )}
                 </Td> */}
-                <Td textAlign="right" width="8%" py={3}>
+                <Td textAlign="right" width={{ base: "6%", xl: "8%" }} py={3}>
                   <Box>
                     <Text>{formatCurrency(contest.poolSizes?.total.over || 0)}</Text>
                     <Text>{formatCurrency(contest.poolSizes?.total.under || 0)}</Text>
                   </Box>
                 </Td>
-                <Td p={0} width="2%">
-                  <AnimatedChevron 
-                    side="right" 
+                <Td p={0} width={{ base: "1%", xl: "2%" }}>
+                  <AnimatedChevron
+                    side="right"
                     isRowExpanded={expandedRow === index}
                   />
                 </Td>
               </Tr>
               <Tr>
                 <Td colSpan={12} p={0}>
-                  <ContestRowDetails 
+                  <ContestRowDetails
                     contest={contest}
                     isOpen={expandedRow === index}
                   />

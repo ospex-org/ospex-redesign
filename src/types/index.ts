@@ -21,8 +21,8 @@ export interface Contest {
   homeSpread: number;
   awaySpreadOdds: number;
   homeSpreadOdds: number;
-  awayMoneyline: number;
-  homeMoneyline: number;
+  awayMoneylineOdds: number;
+  homeMoneylineOdds: number;
   total: number;
   overOdds: number;
   underOdds: number;

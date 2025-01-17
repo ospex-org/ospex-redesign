@@ -1,84 +1,37 @@
 import React from 'react';
-import { Box, Flex, Grid, Text, Button, Tabs, TabList, Tab, TabPanels, TabPanel, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
+import { Box, Flex, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
 import { Contest } from '../../types';
-import BetPoolPieChart from '../common/BetPoolPieChart';
-import OddsChartContainer from '../graphs/OddsChartContainer';
-import { useRouter } from 'next/navigation';
-import { RadioCard } from '../common/RadioCard';
-import { useRadioGroup, VStack } from '@chakra-ui/react';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import { getTeamColor, NFL_TEAMS, BETTING_COLORS } from '@/constants/teamColors';
+import BetTypePanel from './BetTypePanel';
+import { useRadioGroup } from '@chakra-ui/react';
 
 interface ContestRowDetailsProps {
   contest: Contest;
   isOpen: boolean;
 }
 
-const formatSpread = (spread: number) => {
-  return spread > 0 ? `+${spread}` : spread;
-};
-
-const formatOdds = (odds: number) => {
-  return odds > 0 ? `+${odds}` : odds;
-};
-
 const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }) => {
-  const router = useRouter();
-
-  // Separate states for each bet type
+  // State management
   const [spreadSelection, setSpreadSelection] = React.useState("");
   const [moneylineSelection, setMoneylineSelection] = React.useState("");
   const [totalSelection, setTotalSelection] = React.useState("");
   const [betAmount, setBetAmount] = React.useState(1);
   const [contributeAmount, setContributeAmount] = React.useState(0);
-
-  // Get current selection based on active tab
   const [activeTab, setActiveTab] = React.useState(0);
-  const getCurrentSelection = () => {
-    switch(activeTab) {
-      case 0: return spreadSelection;
-      case 1: return moneylineSelection;
-      case 2: return totalSelection;
-      default: return "";
-    }
-  };
 
-  // Handle radio changes for each type
-  const handleSpreadChange = (value: string) => {
-    setSpreadSelection(value === spreadSelection ? "" : value);
-  };
-
-  const handleMoneylineChange = (value: string) => {
-    setMoneylineSelection(value === moneylineSelection ? "" : value);
-  };
-
-  const handleTotalChange = (value: string) => {
-    setTotalSelection(value === totalSelection ? "" : value);
-  };
-
-  // Create separate radio groups for each bet type
-  const {
-    getRootProps: getSpreadRootProps,
-    getRadioProps: getSpreadRadioProps
-  } = useRadioGroup({
+  // Radio group hooks
+  const spreadRadioProps = useRadioGroup({
     value: spreadSelection,
-    onChange: handleSpreadChange
+    onChange: (value) => setSpreadSelection(value === spreadSelection ? "" : value)
   });
 
-  const {
-    getRootProps: getMoneylineRootProps,
-    getRadioProps: getMoneylineRadioProps
-  } = useRadioGroup({
+  const moneylineRadioProps = useRadioGroup({
     value: moneylineSelection,
-    onChange: handleMoneylineChange
+    onChange: (value) => setMoneylineSelection(value === moneylineSelection ? "" : value)
   });
 
-  const {
-    getRootProps: getTotalRootProps,
-    getRadioProps: getTotalRadioProps
-  } = useRadioGroup({
+  const totalRadioProps = useRadioGroup({
     value: totalSelection,
-    onChange: handleTotalChange
+    onChange: (value) => setTotalSelection(value === totalSelection ? "" : value)
   });
 
   return (
@@ -100,444 +53,121 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
     >
       <Flex 
         p={4} 
-        justify="space-between"
+        justify="flex-start"
         opacity={isOpen ? 1 : 0}
         transition="opacity 0.2s"
         position="relative"
       >
-        {/* Left side: Reserved for future content */}
-        <Box width="45%">
+        <Box 
+          display={{ base: 'none', xl: 'block' }}
+          width={{ base: '0%', xl: '47%' }}
+          sx={{
+            '@media screen and (min-width: 1280px) and (max-width: 1410px)': {
+              width: '41%'  // Adjusted width for this specific range
+            }
+          }}
+        >
           {/* Future content: stats, write-ups, etc. */}
         </Box>
 
-        {/* Right side: Betting interface */}
-        <Box width="55%" position="relative">
-          <Tabs variant="soft-rounded" colorScheme="blue" orientation="vertical" onChange={(index) => setActiveTab(index)}>
-            <Flex gap={6}>
-              {/* Button list - moved more to center */}
+        <Box 
+          width={{ base: '100%', xl: '53%' }}
+          position="relative"
+          maxWidth={{ base: '600px', xl: 'none' }}
+          mx={{ base: 'auto', xl: '0' }}
+          sx={{
+            '@media screen and (min-width: 1280px) and (max-width: 1410px)': {
+              width: '59%'  // Adjusted width for this specific range
+            }
+          }}
+        >
+          <Tabs 
+            variant="soft-rounded" 
+            colorScheme="blue" 
+            orientation="vertical" 
+            onChange={setActiveTab}
+            sx={{
+              marginLeft: '-2rem',
+              '.chakra-tabs__tablist': {
+                marginLeft: 0,
+                paddingLeft: 0
+              }
+            }}
+          >
+            <Flex 
+              gap={{ base: 2, xl: 6 }}
+              ml={0}
+              pl={0}
+            >
               <TabList 
                 flexDirection="column" 
                 gap={2}
-                width="120px"
+                width={{ base: "100px", xl: "120px" }}
+                ml={0}
+                pl={0}
               >
-                <Tab 
-                  justifyContent="flex-start"
-                  px={4}
-                  py={2}
-                  _selected={{ 
-                    bg: 'gray.700',
-                    color: 'white' 
-                  }}
-                >
-                  Spread
-                </Tab>
-                <Tab 
-                  justifyContent="flex-start"
-                  px={4}
-                  py={2}
-                  _selected={{ 
-                    bg: 'gray.700',
-                    color: 'white' 
-                  }}
-                >
-                  Moneyline
-                </Tab>
-                <Tab 
-                  justifyContent="flex-start"
-                  px={4}
-                  py={2}
-                  _selected={{ 
-                    bg: 'gray.700',
-                    color: 'white' 
-                  }}
-                >
-                  Total
-                </Tab>
+                {['Spread', 'Moneyline', 'Total'].map((label) => (
+                  <Tab 
+                    key={label}
+                    justifyContent="flex-start"
+                    px={{ base: 2, xl: 4 }}
+                    py={2}
+                    _selected={{ 
+                      bg: 'gray.700',
+                      color: 'white' 
+                    }}
+                  >
+                    {label}
+                  </Tab>
+                ))}
               </TabList>
 
-              {/* Chart and betting options */}
-              <TabPanels width="calc(100% - 140px)">
-                <TabPanel p={0} height="100%">
-                  <Flex align="center" height="100%" gap={4}>
-                    {/* Chart */}
-                    <Box 
-                      display="flex" 
-                      alignItems="center" 
-                      justifyContent="center"
-                      height="100%"
-                      minWidth="100px"
-                    >
-                      <BetPoolPieChart
-                        poolSizeA={contest.poolSizes?.spread.away || 0}
-                        poolSizeB={contest.poolSizes?.spread.home || 0}
-                        size="100px"
-                        colorA={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
-                          NFL_TEAMS[contest.awayTeam].secondary : 
-                          getTeamColor(contest.awayTeam)}
-                        colorB={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
-                          NFL_TEAMS[contest.homeTeam].secondary : 
-                          getTeamColor(contest.homeTeam)}
-                        teamAName={contest.awayTeam}
-                        teamBName={contest.homeTeam}
-                      />
-                    </Box>
-                    
-                    {/* Radio Buttons */}
-                    <Box 
-                      flex="1"
-                      p={0}
-                      height="100%"
-                    >
-                      <VStack {...getSpreadRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
-                        <RadioCard
-                          {...getSpreadRadioProps({ value: 'spread_away' })}
-                          label={`${contest.awayTeam} ${formatSpread(contest.awaySpread)}`}
-                          description={`Current Odds: ${formatOdds(contest.awaySpreadOdds)}`}
-                          teamColor={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
-                            NFL_TEAMS[contest.awayTeam].secondary : 
-                            getTeamColor(contest.awayTeam)}
-                        />
-                        <RadioCard
-                          {...getSpreadRadioProps({ value: 'spread_home' })}
-                          label={`${contest.homeTeam} ${formatSpread(contest.homeSpread)}`}
-                          description={`Current Odds: ${formatOdds(contest.homeSpreadOdds)}`}
-                          teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
-                            NFL_TEAMS[contest.homeTeam].secondary : 
-                            getTeamColor(contest.homeTeam)}
-                        />
-                      </VStack>
-                    </Box>
-
-                    {/* New 2x2 Grid for Betting Interface */}
-                    <Grid 
-                      templateColumns="repeat(2, 1fr)" 
-                      gap={3}
-                      width="240px"
-                      height="100%"
-                      ml={2}
-                      borderRadius="md"
-                      alignContent="center"
-                    >
-                      {/* [1] Amount Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Amount (USDC)</Text>
-                        <NumberInput 
-                          size="sm"
-                          value={betAmount}
-                          onChange={(valueString) => setBetAmount(Number(valueString))}
-                          min={1}
-                          max={100}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </Box>
-
-                      {/* [2] Contribute Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Contribute</Text>
-                        <NumberInput
-                          size="sm"
-                          value={contributeAmount}
-                          onChange={(valueString) => setContributeAmount(Number(valueString))}
-                          min={0}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                        <Text fontSize="xs" color="gray.500" mt={1}>(Not required)</Text>
-                      </Box>
-
-                      {/* [3] Place Bet Button */}
-                      <Button
-                        size="sm"
-                        bg="gray.700"
-                        color="white"
-                        _hover={{ bg: 'gray.600' }}
-                        _disabled={{
-                          bg: 'gray.900',
-                          opacity: 0.7,
-                          cursor: 'not-allowed'
-                        }}
-                        isDisabled={!spreadSelection}
-                      >
-                        Place Bet
-                      </Button>
-
-                      {/* [4] Full Details Link */}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        rightIcon={<ChevronRightIcon />}
-                        onClick={() => router.push(`/c/${contest.id}`)}
-                        color="gray.400"
-                        _hover={{ color: 'white' }}
-                      >
-                        Full Details
-                      </Button>
-                    </Grid>
-                  </Flex>
+              <TabPanels 
+                width={{ base: "calc(100% - 110px)", xl: "calc(100% - 140px)" }}
+                pl={0}
+              >
+                <TabPanel 
+                  p={0} 
+                  height="100%"
+                  pl={0}
+                >
+                  <BetTypePanel
+                    type="spread"
+                    contest={contest}
+                    selection={spreadSelection}
+                    radioProps={spreadRadioProps}
+                    betAmount={betAmount}
+                    setBetAmount={setBetAmount}
+                    contributeAmount={contributeAmount}
+                    setContributeAmount={setContributeAmount}
+                  />
                 </TabPanel>
 
                 <TabPanel p={0} height="100%">
-                  <Flex align="center" height="100%" gap={4}>
-                    <Box 
-                      display="flex" 
-                      alignItems="center" 
-                      justifyContent="center"
-                      height="100%"
-                      minWidth="100px"
-                    >
-                      <BetPoolPieChart
-                        poolSizeA={contest.poolSizes?.moneyline.away || 0}
-                        poolSizeB={contest.poolSizes?.moneyline.home || 0}
-                        size="100px"
-                        colorA={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ? 
-                          NFL_TEAMS[contest.awayTeam].secondary : 
-                          getTeamColor(contest.awayTeam)}
-                        colorB={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
-                          NFL_TEAMS[contest.homeTeam].secondary : 
-                          getTeamColor(contest.homeTeam)}
-                        teamAName={contest.awayTeam}
-                        teamBName={contest.homeTeam}
-                      />
-                    </Box>
-                    
-                    <Box flex="1" p={0} height="100%">
-                      <VStack {...getMoneylineRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
-                        <RadioCard
-                          {...getMoneylineRadioProps({ value: 'moneyline_away' })}
-                          label={`${contest.awayTeam}`}
-                          description={`Current Odds: ${formatOdds(contest.awayMoneyline)}`}
-                          teamColor={getTeamColor(contest.awayTeam)}
-                          secondaryColor={NFL_TEAMS[contest.awayTeam]?.secondary}
-                        />
-                        <RadioCard
-                          {...getMoneylineRadioProps({ value: 'moneyline_home' })}
-                          label={`${contest.homeTeam}`}
-                          description={`Current Odds: ${formatOdds(contest.homeMoneyline)}`}
-                          teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ? 
-                            NFL_TEAMS[contest.homeTeam].secondary : 
-                            getTeamColor(contest.homeTeam)}
-                        />
-                      </VStack>
-                    </Box>
-
-                    {/* New 2x2 Grid for Betting Interface */}
-                    <Grid 
-                      templateColumns="repeat(2, 1fr)" 
-                      gap={3}
-                      width="240px"
-                      height="100%"
-                      ml={2}
-                      borderRadius="md"
-                      alignContent="center"
-                    >
-                      {/* [1] Amount Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Amount (USDC)</Text>
-                        <NumberInput 
-                          size="sm"
-                          value={betAmount}
-                          onChange={(valueString) => setBetAmount(Number(valueString))}
-                          min={1}
-                          max={100}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </Box>
-
-                      {/* [2] Contribute Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Contribute</Text>
-                        <NumberInput
-                          size="sm"
-                          value={contributeAmount}
-                          onChange={(valueString) => setContributeAmount(Number(valueString))}
-                          min={0}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                        <Text fontSize="xs" color="gray.500" mt={1}>(Not required)</Text>
-                      </Box>
-
-                      {/* [3] Place Bet Button */}
-                      <Button
-                        size="sm"
-                        bg="gray.700"
-                        color="white"
-                        _hover={{ bg: 'gray.600' }}
-                        _disabled={{
-                          bg: 'gray.900',
-                          opacity: 0.7,
-                          cursor: 'not-allowed'
-                        }}
-                        isDisabled={!moneylineSelection}
-                      >
-                        Place Bet
-                      </Button>
-
-                      {/* [4] Full Details Link */}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        rightIcon={<ChevronRightIcon />}
-                        onClick={() => router.push(`/c/${contest.id}`)}
-                        color="gray.400"
-                        _hover={{ color: 'white' }}
-                      >
-                        Full Details
-                      </Button>
-                    </Grid>
-                  </Flex>
+                  <BetTypePanel
+                    type="moneyline"
+                    contest={contest}
+                    selection={moneylineSelection}
+                    radioProps={moneylineRadioProps}
+                    betAmount={betAmount}
+                    setBetAmount={setBetAmount}
+                    contributeAmount={contributeAmount}
+                    setContributeAmount={setContributeAmount}
+                  />
                 </TabPanel>
 
                 <TabPanel p={0} height="100%">
-                  <Flex align="center" height="100%" gap={4}>
-                    <Box 
-                      display="flex" 
-                      alignItems="center" 
-                      justifyContent="center"
-                      height="100%"
-                      minWidth="100px"
-                    >
-                      <BetPoolPieChart
-                        poolSizeA={contest.poolSizes?.total.over || 0}
-                        poolSizeB={contest.poolSizes?.total.under || 0}
-                        size="100px"
-                        colorA={BETTING_COLORS.OVER}
-                        colorB={BETTING_COLORS.UNDER}
-                        teamAName="Over"
-                        teamBName="Under"
-                      />
-                    </Box>
-                    
-                    <Box flex="1" p={0} height="100%">
-                      <VStack {...getTotalRootProps()} spacing={1} width="100%" height="100%" justify="space-between">
-                        <RadioCard
-                          {...getTotalRadioProps({ value: 'total_over' })}
-                          label={`Over ${contest.total}`}
-                          description={`Current Odds: ${formatOdds(contest.overOdds)}`}
-                          teamColor={BETTING_COLORS.OVER}
-                        />
-                        <RadioCard
-                          {...getTotalRadioProps({ value: 'total_under' })}
-                          label={`Under ${contest.total}`}
-                          description={`Current Odds: ${formatOdds(contest.underOdds)}`}
-                          teamColor={BETTING_COLORS.UNDER}
-                        />
-                      </VStack>
-                    </Box>
-
-                    {/* New 2x2 Grid for Betting Interface */}
-                    <Grid 
-                      templateColumns="repeat(2, 1fr)" 
-                      gap={3}
-                      width="240px"
-                      height="100%"
-                      ml={2}
-                      borderRadius="md"
-                      alignContent="center"
-                    >
-                      {/* [1] Amount Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Amount (USDC)</Text>
-                        <NumberInput 
-                          size="sm"
-                          value={betAmount}
-                          onChange={(valueString) => setBetAmount(Number(valueString))}
-                          min={1}
-                          max={100}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </Box>
-
-                      {/* [2] Contribute Selector */}
-                      <Box>
-                        <Text fontSize="xs" mb={1} color="gray.400">Contribute</Text>
-                        <NumberInput
-                          size="sm"
-                          value={contributeAmount}
-                          onChange={(valueString) => setContributeAmount(Number(valueString))}
-                          min={0}
-                          step={1}
-                          bg="gray.900"
-                          borderRadius="md"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                        <Text fontSize="xs" color="gray.500" mt={1}>(Not required)</Text>
-                      </Box>
-
-                      {/* [3] Place Bet Button */}
-                      <Button
-                        size="sm"
-                        bg="gray.700"
-                        color="white"
-                        _hover={{ bg: 'gray.600' }}
-                        _disabled={{
-                          bg: 'gray.900',
-                          opacity: 0.7,
-                          cursor: 'not-allowed'
-                        }}
-                        isDisabled={!totalSelection}
-                      >
-                        Place Bet
-                      </Button>
-
-                      {/* [4] Full Details Link */}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        rightIcon={<ChevronRightIcon />}
-                        onClick={() => router.push(`/c/${contest.id}`)}
-                        color="gray.400"
-                        _hover={{ color: 'white' }}
-                      >
-                        Full Details
-                      </Button>
-                    </Grid>
-                  </Flex>
+                  <BetTypePanel
+                    type="total"
+                    contest={contest}
+                    selection={totalSelection}
+                    radioProps={totalRadioProps}
+                    betAmount={betAmount}
+                    setBetAmount={setBetAmount}
+                    contributeAmount={contributeAmount}
+                    setContributeAmount={setContributeAmount}
+                  />
                 </TabPanel>
-
               </TabPanels>
             </Flex>
           </Tabs>

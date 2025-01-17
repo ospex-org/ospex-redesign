@@ -9,7 +9,7 @@ const menuItems = [
   { name: 'NFL', count: 16 },
   { name: 'NBA', count: 0 },
   { name: 'MLB', count: 12 },
-  { name: 'NCAAF', count: 64 },
+  { name: 'NCF', count: 64 },
   { name: 'NHL', count: 0 },
   { name: 'Soccer', count: 6 },
   { name: 'WNBA', count: 6 }
@@ -23,7 +23,6 @@ const MenuBar = () => {
   return (
     <Box 
       as="nav" 
-      // borderTop="1px solid"
       borderBottom="1px solid" 
       borderColor="gray.600" 
       width="100%"
@@ -53,32 +52,46 @@ const MenuBar = () => {
               pointerEvents={item.count > 0 ? 'auto' : 'none'}
               _hover={{
                 color: (isHomePage && item.name === 'All') || item.count > 0 ? activeColor : 'gray.500',
-                '&::before, &::after': (isHomePage && item.name === 'All') || item.count > 0 ? {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  height: '1px',
-                  backgroundColor: 'white',
-                } : {}
+                '@media screen and (min-width: 390px)': {
+                  '&::before, &::after': (isHomePage && item.name === 'All') || item.count > 0 ? {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    height: '1px',
+                    backgroundColor: 'white',
+                  } : {}
+                }
+              }}
+              sx={{
+                '@media screen and (min-width: 390px)': {
+                  ...(isHomePage && item.name === 'All' ? {
+                    '&::before, &::after': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      height: '1px',
+                      backgroundColor: 'white',
+                    }
+                  } : {}),
+                },
+                ...(isHomePage && item.name === 'All' ? {
+                  color: activeColor,
+                } : {})
               }}
               _before={{
-                top: '-9px',
+                '@media screen and (min-width: 390px)': {
+                  top: '-9px',
+                }
               }}
               _after={{
-                bottom: '-9px',
-              }}
-              sx={isHomePage && item.name === 'All' ? {
-                color: activeColor,
-                '&::before, &::after': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  height: '1px',
-                  backgroundColor: 'white',
+                '@media screen and (min-width: 390px)': {
+                  bottom: '-9px',
                 }
-              } : {}}
+              }}
+              fontSize={{ base: "xs", md: "md" }}
+              whiteSpace="nowrap"
             >
               {item.name}
             </Text>
