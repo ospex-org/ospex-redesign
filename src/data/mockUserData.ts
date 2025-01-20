@@ -36,7 +36,8 @@ export const mockUsers: User[] = [
         type: 'spread',
         date: '2024-01-15',
         league: 'NFL',
-        leagueId: 1
+        leagueId: 1,
+        toWin: 45.00
       },
       { 
         id: '2', 
@@ -52,7 +53,8 @@ export const mockUsers: User[] = [
         type: 'total',
         date: '2024-01-14',
         league: 'NFL',
-        leagueId: 1
+        leagueId: 1,
+        toWin: 0
       },
       { 
         id: '3', 
@@ -68,7 +70,8 @@ export const mockUsers: User[] = [
         type: 'moneyline',
         date: '2024-01-13',
         league: 'NFL',
-        leagueId: 1
+        leagueId: 1,
+        toWin: 142.50
       },
     ]
   },
@@ -106,7 +109,8 @@ export const mockUsers: User[] = [
         type: 'spread',
         date: '2024-01-16',
         league: 'MLB',
-        leagueId: 2
+        leagueId: 2,
+        toWin: 380.00
       },
       { 
         id: '5', 
@@ -122,7 +126,8 @@ export const mockUsers: User[] = [
         type: 'total',
         date: '2024-01-15',
         league: 'MLB',
-        leagueId: 2
+        leagueId: 2,
+        toWin: 285.00
       },
       { 
         id: '6', 
@@ -138,7 +143,8 @@ export const mockUsers: User[] = [
         type: 'moneyline',
         date: '2024-01-14',
         league: 'NHL',
-        leagueId: 3
+        leagueId: 3,
+        toWin: 0
       },
     ]
   },
@@ -176,7 +182,8 @@ export const mockUsers: User[] = [
         type: 'spread',
         date: '2024-01-17',
         league: 'NBA',
-        leagueId: 4
+        leagueId: 4,
+        toWin: 45.00
       },
       { 
         id: '8', 
@@ -192,7 +199,8 @@ export const mockUsers: User[] = [
         type: 'moneyline',
         date: '2024-01-16',
         league: 'NBA',
-        leagueId: 4
+        leagueId: 4,
+        toWin: 0
       },
       { 
         id: '9', 
@@ -208,7 +216,8 @@ export const mockUsers: User[] = [
         type: 'total',
         date: '2024-01-15',
         league: 'NBA',
-        leagueId: 4
+        leagueId: 4,
+        toWin: 190.00
       },
     ]
   }
@@ -225,32 +234,60 @@ export interface BettingHistoryEntry {
   result: number;
 }
 
-export const getUserById = (id: string) => {
-  // Sort bets by date and calculate cumulative profit/loss
-  const bettingHistory = sampleData.bettingHistory
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-  let cumulativeNet = 0;
-  const recentBets = bettingHistory.map(bet => ({
-    id: Math.random().toString(36).substr(2, 9),
-    contestBetId: Math.random().toString(36).substr(2, 9),
+export const getUserById = (id: string): User => {
+  const bettingHistory = sampleData.bettingHistory;
+  
+  const recentBets: UserBet[] = bettingHistory.map(bet => ({
+    id: Math.random().toString(),
+    contestBetId: Math.random().toString(),
     userId: id,
+    date: bet.date,
+    league: bet.league,
+    leagueId: 1,
+    team: bet.team,
+    type: bet.betType as 'spread' | 'moneyline' | 'total',
+    side: bet.betType === 'total' ? 
+      (bet.line?.toString().includes('over') ? 'over' : 'under') : 
+      'away',
+    theNumber: typeof bet.line === 'string' 
+      ? parseFloat(bet.line.replace(/^(over|under)\s+/, ''))
+      : (bet.line ?? undefined),
+    odds: '+110',
     amount: bet.stake,
     contributedUponCreation: 0,
     contributedUponClaim: 0,
-    side: bet.betType,
     claimed: bet.result !== 0,
     amountClaimed: bet.result > 0 ? bet.stake + bet.result : 0,
-    odds: bet.toWin.toString(),
-    type: bet.betType as 'spread' | 'moneyline' | 'total',
-    date: bet.date,
-    league: bet.league,
-    leagueId: 1
+    isClaimable: bet.isClaimable,
+    toWin: bet.toWin
   }));
+
+  // Calculate stats
+  const wins = recentBets.filter(bet => 
+    bet.amountClaimed > bet.amount || bet.isClaimable
+  ).length;
+
+  const losses = recentBets.filter(bet => 
+    bet.claimed && bet.amountClaimed === 0
+  ).length;
+
+  const pending = recentBets.filter(bet => 
+    !bet.claimed && !bet.isClaimable
+  ).length;
+
+  // Calculate net including claimable bets
+  const net = recentBets.reduce((sum, bet) => {
+    if (!bet.claimed) {
+      // Include potential wins from claimable bets
+      return sum + (bet.isClaimable ? (bet.toWin ?? 0) : 0);
+    }
+    // For claimed bets, use actual P/L
+    return sum + (bet.amountClaimed - bet.amount);
+  }, 0);
 
   return {
     id,
-    address: '0x1234...5678',
+    address: '0xA8eb19F9B7c2b2611C1279423A0CB2aee3735320',
     alias: 'Sample User',
     totalSpeculated: recentBets.reduce((sum, bet) => sum + bet.amount, 0),
     totalClaimed: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed || 0), 0),
@@ -258,11 +295,11 @@ export const getUserById = (id: string) => {
     totalContributed: 0,
     totalLost: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed === 0 ? bet.amount : 0), 0),
     totalPending: 0,
-    wins: recentBets.filter(bet => bet.amountClaimed > bet.amount).length,
-    losses: recentBets.filter(bet => bet.amountClaimed === 0).length,
+    wins,
+    losses,
     ties: recentBets.filter(bet => bet.amountClaimed === bet.amount).length,
-    net: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed - bet.amount), 0),
-    record: '',
+    net,
+    record: `${wins}-${losses}${pending > 0 ? ` (${pending} Pending)` : ''}`,
     winPercentage: '50',
     totalBet: recentBets.reduce((sum, bet) => sum + bet.amount, 0).toString(),
     lastActivity: recentBets[recentBets.length - 1]?.date || '',

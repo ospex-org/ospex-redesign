@@ -30,17 +30,29 @@ const UserPerformanceChart: React.FC<UserPerformanceChartProps> = ({
   const chartInstanceRef = useRef<Chart | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1M');
 
-  // Transform recentBets into chart data
+  // Calculate running total
   const chartData = useMemo(() => {
-    return recentBets
+    const data = recentBets
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .reduce((acc, bet) => {
         const lastValue = acc[acc.length - 1]?.net || 0;
+        let profitLoss = 0;
+
+        if (!bet.claimed) {
+          // Include potential wins from claimable bets
+          profitLoss = bet.isClaimable ? (bet.toWin ?? 0) : 0;
+        } else {
+          // For claimed bets, use actual P/L
+          profitLoss = bet.amountClaimed - bet.amount;
+        }
+
         return [...acc, {
           date: bet.date,
-          net: lastValue + (bet.amountClaimed - bet.amount)
+          net: lastValue + profitLoss
         }];
       }, [] as Array<{date: string; net: number}>);
+
+    return data;
   }, [recentBets]);
 
   useEffect(() => {
@@ -68,13 +80,15 @@ const UserPerformanceChart: React.FC<UserPerformanceChartProps> = ({
           segment: {
             borderColor: (ctx: ScriptableLineSegmentContext) => {
               const value = ctx.p1.parsed.y;
-              return value >= 0 ? '#48BB78' : '#E53E3E';
+              return value > 0 ? '#48BB78' : value < 0 ? '#E53E3E' : '#718096';  // Gray for zero
             },
             backgroundColor: (ctx: ScriptableLineSegmentContext) => {
               const value = ctx.p1.parsed.y;
-              return value >= 0 
-                ? 'rgba(72, 187, 120, 0.1)'  // green with opacity
-                : 'rgba(229, 62, 62, 0.1)';  // red with opacity
+              return value > 0 
+                ? 'rgba(72, 187, 120, 0.1)'   // green with opacity
+                : value < 0 
+                  ? 'rgba(229, 62, 62, 0.1)'  // red with opacity
+                  : 'transparent';             // no fill for zero
             }
           },
           tension: 0,
@@ -164,22 +178,6 @@ const UserPerformanceChart: React.FC<UserPerformanceChartProps> = ({
 
   return (
     <Box>
-      <Flex justify="space-between" mb={4}>
-        <ButtonGroup size="sm" isAttached variant="outline">
-          {timeframes.map(({ label, value }) => (
-            <Button
-              key={value}
-              onClick={() => {
-                setSelectedTimeframe(value);
-                onTimeframeChange?.(value);
-              }}
-              colorScheme={selectedTimeframe === value ? 'blue' : 'gray'}
-            >
-              {label}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </Flex>
       <Box height="400px">
         <canvas ref={chartRef} />
       </Box>

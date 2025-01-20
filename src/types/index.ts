@@ -58,6 +58,12 @@ export interface UserBet {
   date: string;
   league: string;
   leagueId: number;
+  team?: string;
+  awayTeam?: string;
+  homeTeam?: string;
+  theNumber?: number;
+  isClaimable?: boolean;
+  toWin?: number;
 }
 
 export interface User {

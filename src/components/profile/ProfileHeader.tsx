@@ -25,14 +25,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
         </BreadcrumbItem>
       </Breadcrumb>
 
-      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+      <Flex justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
           <Heading as="h1" size="xl" mb={2}>{user.alias}</Heading>
           <Text color="gray.500">{user.address}</Text>
         </Box>
       </Flex>
 
-      <Text mb={6}>{user.description}</Text>
+      <Text mb={1}>{user.description}</Text>
     </Box>
   );
 }; 

@@ -6,9 +6,10 @@
         "team": "Washington Commanders",
         "betType": "spread",
         "line": 8.5,
-        "stake": 1,
-        "toWin": 1.00,
-        "result": 1.00
+        "stake": 10,
+        "toWin": 10.00,
+        "result": 0,
+        "isClaimable": true
       },
       {
         "date": "2024-08-01",
@@ -18,7 +19,8 @@
         "line": null,
         "stake": 10,
         "toWin": 10.00,
-        "result": -10.00
+        "result": 10.00,
+        "isClaimable": false
       },
       {
         "date": "2024-07-27",
@@ -27,15 +29,16 @@
         "betType": "moneyline",
         "line": null,
         "stake": 10,
-        "toWin": 5.00,
-        "result": 5.00
+        "toWin": 10.00,
+        "result": 0,
+        "isClaimable": true
       },
       {
         "date": "2024-07-27",
         "league": "MLB",
         "team": "New York Yankees at Boston Red Sox",
         "betType": "total",
-        "line": "under 10",
+        "line": "under 10.5",
         "stake": 10,
         "toWin": 0.00,
         "result": 0.00
@@ -156,9 +159,9 @@
         "team": "Chicago White Sox",
         "betType": "moneyline",
         "line": null,
-        "stake": 1,
-        "toWin": 1.00,
-        "result": 0.00
+        "stake": 10,
+        "toWin": 10.00,
+        "result": -10.00
       },
       {
         "date": "2024-06-21",
@@ -188,7 +191,7 @@
         "line": -9.5,
         "stake": 10,
         "toWin": 10.00,
-        "result": 0.00
+        "result": -10.00
       },
       {
         "date": "2024-05-22",

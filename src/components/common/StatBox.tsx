@@ -23,7 +23,9 @@ const StatBox: React.FC<StatBoxProps> = ({ label, value, change, format }) => {
 
   return (
     <Box 
-      p={4} 
+      p={3}
+      pt={2}
+      pb={2}
       borderRadius="lg" 
       borderWidth="1px" 
       borderColor="gray.700"
@@ -31,8 +33,10 @@ const StatBox: React.FC<StatBoxProps> = ({ label, value, change, format }) => {
       _hover={{ borderColor: 'gray.600' }}
       transition="all 0.2s"
     >
-      <Text fontSize="sm" color="gray.400" mb={1}>{label}</Text>
-      <Text fontSize="2xl" fontWeight="bold" mb={1}>
+      <Text color="gray.400" fontSize="sm" mb={1}>
+        {label}
+      </Text>
+      <Text fontSize="xl" fontWeight="bold">
         {formatValue(value)}
       </Text>
       {change !== undefined && (
