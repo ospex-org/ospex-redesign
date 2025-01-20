@@ -1,4 +1,5 @@
 import { User, UserBet } from '../types'
+import sampleData from './sample.json';
 
 export const mockUsers: User[] = [
   {
@@ -78,6 +79,59 @@ export const mockUsers: User[] = [
   }
 ]
 
-export const getUserById = (id: string): User | undefined => {
-  return mockUsers.find(user => user.id === id)
+export interface BettingHistoryEntry {
+  date: string;
+  league: string;
+  team: string;
+  betType: string;
+  line: number | null;
+  stake: number;
+  toWin: number;
+  result: number;
 }
+
+export const getUserById = (id: string) => {
+  // Sort bets by date and calculate cumulative profit/loss
+  const bettingHistory = sampleData.bettingHistory
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  let cumulativeNet = 0;
+  const recentBets = bettingHistory.map(bet => ({
+    id: Math.random().toString(36).substr(2, 9),
+    contestBetId: Math.random().toString(36).substr(2, 9),
+    userId: id,
+    amount: bet.stake,
+    contributedUponCreation: 0,
+    contributedUponClaim: 0,
+    side: bet.betType,
+    claimed: bet.result !== 0,
+    amountClaimed: bet.result > 0 ? bet.stake + bet.result : 0,
+    odds: bet.toWin.toString(),
+    type: bet.betType as 'spread' | 'moneyline' | 'total',
+    date: bet.date,
+    league: bet.league,
+    leagueId: 1
+  }));
+
+  return {
+    id,
+    address: '0x1234...5678',
+    alias: 'Sample User',
+    totalSpeculated: recentBets.reduce((sum, bet) => sum + bet.amount, 0),
+    totalClaimed: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed || 0), 0),
+    totalClaimable: 0,
+    totalContributed: 0,
+    totalLost: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed === 0 ? bet.amount : 0), 0),
+    totalPending: 0,
+    wins: recentBets.filter(bet => bet.amountClaimed > bet.amount).length,
+    losses: recentBets.filter(bet => bet.amountClaimed === 0).length,
+    ties: recentBets.filter(bet => bet.amountClaimed === bet.amount).length,
+    net: recentBets.reduce((sum, bet) => sum + (bet.amountClaimed - bet.amount), 0),
+    record: '',
+    winPercentage: '50',
+    totalBet: recentBets.reduce((sum, bet) => sum + bet.amount, 0).toString(),
+    lastActivity: recentBets[recentBets.length - 1]?.date || '',
+    description: 'Sample user with betting history',
+    recentBets
+  };
+};

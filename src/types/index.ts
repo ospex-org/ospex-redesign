@@ -55,6 +55,9 @@ export interface UserBet {
   amountClaimed: number;
   odds: string;
   type: 'spread' | 'moneyline' | 'total';
+  date: string;
+  league: string;
+  leagueId: number;
 }
 
 export interface User {

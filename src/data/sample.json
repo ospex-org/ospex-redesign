@@ -1,0 +1,204 @@
+{
+    "bettingHistory": [
+      {
+        "date": "2025-01-18",
+        "league": "NFL",
+        "team": "Washington Commanders",
+        "betType": "spread",
+        "line": 8.5,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 1.00
+      },
+      {
+        "date": "2024-08-01",
+        "league": "MLB",
+        "team": "Baltimore Orioles",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 10.00,
+        "result": -10.00
+      },
+      {
+        "date": "2024-07-27",
+        "league": "MLB",
+        "team": "New York Yankees",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 5.00,
+        "result": 5.00
+      },
+      {
+        "date": "2024-07-27",
+        "league": "MLB",
+        "team": "New York Yankees at Boston Red Sox",
+        "betType": "total",
+        "line": "under 10",
+        "stake": 10,
+        "toWin": 0.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-07-26",
+        "league": "MLB",
+        "team": "Minnesota Twins",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 1.00
+      },
+      {
+        "date": "2024-07-26",
+        "league": "MLB",
+        "team": "Detroit Tigers",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": -1.00
+      },
+      {
+        "date": "2024-07-25",
+        "league": "MLB",
+        "team": "New York Mets",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 10.00,
+        "result": 10.00
+      },
+      {
+        "date": "2024-07-25",
+        "league": "MLB",
+        "team": "Detroit Tigers",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 0.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-07-24",
+        "league": "MLB",
+        "team": "Oakland Athletics",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 5.00,
+        "result": -10.00
+      },
+      {
+        "date": "2024-07-23",
+        "league": "MLB",
+        "team": "New York Yankees",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 5.00,
+        "result": -10.00
+      },
+      {
+        "date": "2024-07-22",
+        "league": "MLB",
+        "team": "Tampa Bay Rays",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": -1.00
+      },
+      {
+        "date": "2024-07-22",
+        "league": "MLB",
+        "team": "New York Yankees",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 1.00
+      },
+      {
+        "date": "2024-07-02",
+        "league": "MLB",
+        "team": "St. Louis Cardinals",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-07-02",
+        "league": "MLB",
+        "team": "Pittsburgh Pirates",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-06-29",
+        "league": "MLB",
+        "team": "Colorado Rockies",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-06-29",
+        "league": "MLB",
+        "team": "Chicago White Sox",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 1,
+        "toWin": 1.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-06-21",
+        "league": "NHL",
+        "team": "Edmonton Oilers",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 2,
+        "toWin": 0.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-05-23",
+        "league": "NBA",
+        "team": "Indiana Pacers",
+        "betType": "spread",
+        "line": 9.5,
+        "stake": 10,
+        "toWin": 10.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-05-23",
+        "league": "NBA",
+        "team": "Boston Celtics",
+        "betType": "spread",
+        "line": -9.5,
+        "stake": 10,
+        "toWin": 10.00,
+        "result": 0.00
+      },
+      {
+        "date": "2024-05-22",
+        "league": "NBA",
+        "team": "Dallas Mavericks",
+        "betType": "moneyline",
+        "line": null,
+        "stake": 10,
+        "toWin": 10.00,
+        "result": 10.00
+      }
+    ]
+  }

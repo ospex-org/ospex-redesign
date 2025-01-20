@@ -17,14 +17,14 @@ export const RadioCard = (props: RadioCardProps) => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault() // Prevent default radio behavior
-    console.log('Radio clicked:', props.value)
-    console.log('Current state:', state.isChecked)
+    // console.log('Radio clicked:', props.value)
+    // console.log('Current state:', state.isChecked)
     
     if (state.isChecked) {
-      console.log('Unchecking...')
+      // console.log('Unchecking...')
       props.onChange?.({ target: { value: '' } } as any)
     } else {
-      console.log('Checking...')
+      // console.log('Checking...')
       props.onChange?.({ target: { value: props.value } } as any)
     }
   }
