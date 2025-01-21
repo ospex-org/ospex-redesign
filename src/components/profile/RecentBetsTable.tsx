@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { UserBet } from '@/types';
 import { useState } from 'react';
+import { TableSkeleton } from '../LoadingIndicators';
 
 interface RecentBetsTableProps {
   bets: UserBet[];
@@ -30,6 +31,10 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
   // Check if there are any claimable bets
   const hasClaimableBets = bets.some(bet => bet.isClaimable);
 
+  if (isLoading) {
+    return <TableSkeleton />
+  }
+
   // Filter bets and sort by date (newest first)
   const filteredBets = showOnlyClaimable 
     ? bets.filter(bet => bet.isClaimable)
@@ -37,22 +42,6 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
 
   // Sort in descending order (newest first)
   filteredBets.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  const LoadingSkeleton = () => (
-    <Tbody>
-      {[...Array(5)].map((_, i) => (
-        <Tr key={i}>
-          <Td><SkeletonText noOfLines={1} width="80px" /></Td>
-          <Td><SkeletonText noOfLines={1} width="60px" /></Td>
-          <Td><SkeletonText noOfLines={1} width="120px" /></Td>
-          <Td><SkeletonText noOfLines={1} width="60px" /></Td>
-          <Td><SkeletonText noOfLines={1} width="60px" /></Td>
-          <Td><SkeletonText noOfLines={1} width="80px" /></Td>
-          <Td><Skeleton height="24px" width="70px" /></Td>
-        </Tr>
-      ))}
-    </Tbody>
-  );
 
   const formatSide = (bet: UserBet) => {
     // TODO: This is using temporary data structure. 
@@ -163,23 +152,19 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
               <Th textAlign="center">Result</Th>
             </Tr>
           </Thead>
-          {isLoading ? (
-            <LoadingSkeleton />
-          ) : (
-            <Tbody>
-              {filteredBets.map((bet) => (
-                <Tr key={bet.id}>
-                  <Td>{bet.date}</Td>
-                  <Td>{bet.league}</Td>
-                  <Td>{formatSide(bet)}</Td>
-                  <Td isNumeric>{formatNumber(bet)}</Td>
-                  <Td isNumeric>{bet.odds}</Td>
-                  <Td isNumeric>{formatProfitLoss(bet)}</Td>
-                  <Td textAlign="center">{getResultBadge(bet)}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          )}
+          <Tbody>
+            {filteredBets.map((bet) => (
+              <Tr key={bet.id}>
+                <Td>{bet.date}</Td>
+                <Td>{bet.league}</Td>
+                <Td>{formatSide(bet)}</Td>
+                <Td isNumeric>{formatNumber(bet)}</Td>
+                <Td isNumeric>{bet.odds}</Td>
+                <Td isNumeric>{formatProfitLoss(bet)}</Td>
+                <Td textAlign="center">{getResultBadge(bet)}</Td>
+              </Tr>
+            ))}
+          </Tbody>
         </Table>
       </Box>
     </>
