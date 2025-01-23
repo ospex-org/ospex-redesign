@@ -16,6 +16,7 @@ import {
 import { UserBet } from '@/types';
 import { useState } from 'react';
 import { TableSkeleton } from '../LoadingIndicators';
+import Pagination from '../common/Pagination';
 
 interface RecentBetsTableProps {
   bets: UserBet[];
@@ -27,6 +28,8 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
   isLoading = false
 }) => {
   const [showOnlyClaimable, setShowOnlyClaimable] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of bets per page
   
   // Check if there are any claimable bets
   const hasClaimableBets = bets.some(bet => bet.isClaimable);
@@ -42,6 +45,16 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
 
   // Sort in descending order (newest first)
   filteredBets.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredBets.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentBets = filteredBets.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const formatSide = (bet: UserBet) => {
     // TODO: This is using temporary data structure. 
@@ -139,7 +152,7 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
         </Checkbox>
       </Flex>
       
-      <Box minH="400px">
+      <Box minH="400px" mb={4}>
         <Table variant="simple">
           <Thead>
             <Tr>
@@ -147,18 +160,20 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
               <Th>League</Th>
               <Th>Side</Th>
               <Th isNumeric>Number</Th>
+              <Th isNumeric>Bet</Th>
               <Th isNumeric>Odds</Th>
-              <Th isNumeric>Amount</Th>
-              <Th textAlign="center">Result</Th>
+              <Th isNumeric>Result</Th>
+              <Th textAlign="center">Status</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {filteredBets.map((bet) => (
+            {currentBets.map((bet) => (
               <Tr key={bet.id}>
                 <Td>{bet.date}</Td>
                 <Td>{bet.league}</Td>
                 <Td>{formatSide(bet)}</Td>
                 <Td isNumeric>{formatNumber(bet)}</Td>
+                <Td isNumeric>${bet.amount.toFixed(2)}</Td>
                 <Td isNumeric>{bet.odds}</Td>
                 <Td isNumeric>{formatProfitLoss(bet)}</Td>
                 <Td textAlign="center">{getResultBadge(bet)}</Td>
@@ -166,6 +181,14 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
             ))}
           </Tbody>
         </Table>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </Box>
     </>
   );
