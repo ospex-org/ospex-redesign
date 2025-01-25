@@ -32,45 +32,50 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
   setContributeAmount,
 }) => {
   const showVisualization = useBreakpointValue({ base: false, md: true });
+  const [hoveredOption, setHoveredOption] = React.useState<string | null>(null);
+
+  const handleMouseEnter = (option: string) => {
+    setHoveredOption(option);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredOption(null);
+  };
 
   const getPieChartProps = () => {
-    switch (type) {
-      case 'spread':
-        return {
-          poolSizeA: contest.poolSizes?.spread.away || 0,
-          poolSizeB: contest.poolSizes?.spread.home || 0,
-          colorA: NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ?
-            NFL_TEAMS[contest.awayTeam].secondary :
-            getTeamColor(contest.awayTeam),
-          colorB: NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ?
-            NFL_TEAMS[contest.homeTeam].secondary :
-            getTeamColor(contest.homeTeam),
-          teamAName: contest.awayTeam,
-          teamBName: contest.homeTeam,
-        };
-      case 'moneyline':
-        return {
-          poolSizeA: contest.poolSizes?.moneyline.away || 0,
-          poolSizeB: contest.poolSizes?.moneyline.home || 0,
-          colorA: NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ?
-            NFL_TEAMS[contest.awayTeam].secondary :
-            getTeamColor(contest.awayTeam),
-          colorB: NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ?
-            NFL_TEAMS[contest.homeTeam].secondary :
-            getTeamColor(contest.homeTeam),
-          teamAName: contest.awayTeam,
-          teamBName: contest.homeTeam,
-        };
-      case 'total':
-        return {
-          poolSizeA: contest.poolSizes?.total.over || 0,
-          poolSizeB: contest.poolSizes?.total.under || 0,
-          colorA: BETTING_COLORS.OVER,
-          colorB: BETTING_COLORS.UNDER,
-          teamAName: "Over",
-          teamBName: "Under",
-        };
-    }
+    const props = (() => {
+      switch (type) {
+        case 'spread':
+          return {
+            poolSizeA: contest.poolSizes?.spread.away || 0,
+            poolSizeB: contest.poolSizes?.spread.home || 0,
+            teamAName: contest.awayTeam,
+            teamBName: contest.homeTeam,
+            hoveredTeam: (hoveredOption === 'spread_away' ? 'A' : hoveredOption === 'spread_home' ? 'B' : null) as ('A' | 'B' | null),
+            selectedTeam: (selection === 'spread_away' ? 'A' : selection === 'spread_home' ? 'B' : null) as ('A' | 'B' | null),
+          };
+        case 'moneyline':
+          return {
+            poolSizeA: contest.poolSizes?.moneyline.away || 0,
+            poolSizeB: contest.poolSizes?.moneyline.home || 0,
+            teamAName: contest.awayTeam,
+            teamBName: contest.homeTeam,
+            hoveredTeam: (hoveredOption === 'moneyline_away' ? 'A' : hoveredOption === 'moneyline_home' ? 'B' : null) as ('A' | 'B' | null),
+            selectedTeam: (selection === 'moneyline_away' ? 'A' : selection === 'moneyline_home' ? 'B' : null) as ('A' | 'B' | null),
+          };
+        case 'total':
+          return {
+            poolSizeA: contest.poolSizes?.total.over || 0,
+            poolSizeB: contest.poolSizes?.total.under || 0,
+            teamAName: "Over",
+            teamBName: "Under",
+            hoveredTeam: (hoveredOption === 'total_over' ? 'A' : hoveredOption === 'total_under' ? 'B' : null) as ('A' | 'B' | null),
+            selectedTeam: (selection === 'total_over' ? 'A' : selection === 'total_under' ? 'B' : null) as ('A' | 'B' | null),
+          };
+      }
+    })();
+
+    return props;
   };
 
   const getRadioCards = () => {
@@ -85,6 +90,8 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
               teamColor={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ?
                 NFL_TEAMS[contest.awayTeam].secondary :
                 getTeamColor(contest.awayTeam)}
+              onMouseEnter={() => handleMouseEnter('spread_away')}
+              onMouseLeave={handleMouseLeave}
             />
             <RadioCard
               {...radioProps.getRadioProps({ value: 'spread_home' })}
@@ -93,6 +100,8 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
               teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ?
                 NFL_TEAMS[contest.homeTeam].secondary :
                 getTeamColor(contest.homeTeam)}
+              onMouseEnter={() => handleMouseEnter('spread_home')}
+              onMouseLeave={handleMouseLeave}
             />
           </>
         );
@@ -106,6 +115,8 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
               teamColor={NFL_TEAMS[contest.awayTeam]?.useSecondaryForDonut ?
                 NFL_TEAMS[contest.awayTeam].secondary :
                 getTeamColor(contest.awayTeam)}
+              onMouseEnter={() => handleMouseEnter('moneyline_away')}
+              onMouseLeave={handleMouseLeave}
             />
             <RadioCard
               {...radioProps.getRadioProps({ value: 'moneyline_home' })}
@@ -114,6 +125,8 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
               teamColor={NFL_TEAMS[contest.homeTeam]?.useSecondaryForDonut ?
                 NFL_TEAMS[contest.homeTeam].secondary :
                 getTeamColor(contest.homeTeam)}
+              onMouseEnter={() => handleMouseEnter('moneyline_home')}
+              onMouseLeave={handleMouseLeave}
             />
           </>
         );
@@ -125,12 +138,16 @@ const BetTypePanel: React.FC<BetTypePanelProps> = ({
               label={`Over ${contest.total}`}
               description={`Current Odds: ${formatOdds(contest.overOdds)}`}
               teamColor={BETTING_COLORS.OVER}
+              onMouseEnter={() => handleMouseEnter('total_over')}
+              onMouseLeave={handleMouseLeave}
             />
             <RadioCard
               {...radioProps.getRadioProps({ value: 'total_under' })}
               label={`Under ${contest.total}`}
               description={`Current Odds: ${formatOdds(contest.underOdds)}`}
               teamColor={BETTING_COLORS.UNDER}
+              onMouseEnter={() => handleMouseEnter('total_under')}
+              onMouseLeave={handleMouseLeave}
             />
           </>
         );

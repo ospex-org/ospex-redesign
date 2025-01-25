@@ -17,6 +17,7 @@ const ContestRowDetails: React.FC<ContestRowDetailsProps> = ({ contest, isOpen }
   const [betAmount, setBetAmount] = React.useState(1);
   const [contributeAmount, setContributeAmount] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
+  const [hoveredOption, setHoveredOption] = React.useState<string | null>(null);
 
   // Radio group hooks
   const spreadRadioProps = useRadioGroup({

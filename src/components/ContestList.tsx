@@ -200,9 +200,8 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
         </Thead>
         <Tbody>
           {contests.map((contest: Contest, index: number) => (
-            <>
+            <React.Fragment key={contest.id}>
               <Tr
-                key={index}
                 onClick={() => handleRowClick(index)}
                 onMouseEnter={() => handleRowMouseEnter(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -348,7 +347,7 @@ const ContestList: React.FC<ContestListProps> = ({ pickersEnabled }) => {
                   />
                 </Td>
               </Tr>
-            </>
+            </React.Fragment>
           ))}
         </Tbody>
       </Table>

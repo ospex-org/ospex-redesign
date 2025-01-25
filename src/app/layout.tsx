@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="dark">
-      <body className={atkinsonHyperlegible.className}>
+      <body className={atkinsonHyperlegible.className} suppressHydrationWarning>
         <ColorModeProvider>
           <Box bg="black" minHeight="100vh">
             <StatsBar />
