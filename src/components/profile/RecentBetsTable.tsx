@@ -135,6 +135,14 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
     return <Badge>Push</Badge>;
   };
 
+  // Update the table container to have a fixed minimum height
+  const MIN_ROW_HEIGHT = 53; // Approximate height of each row
+  const HEADER_HEIGHT = 40; // Approximate height of the header
+  const PAGINATION_HEIGHT = 60; // Approximate height of pagination controls
+  const ROWS_PER_PAGE = 10;
+
+  const MIN_TABLE_HEIGHT = (MIN_ROW_HEIGHT * ROWS_PER_PAGE) + HEADER_HEIGHT + PAGINATION_HEIGHT;
+
   return (
     <>
       <Flex justify="flex-end" mb={4}>
@@ -152,42 +160,46 @@ export const RecentBetsTable: React.FC<RecentBetsTableProps> = ({
         </Checkbox>
       </Flex>
       
-      <Box minH="400px" mb={4}>
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Date</Th>
-              <Th>League</Th>
-              <Th>Side</Th>
-              <Th isNumeric>Number</Th>
-              <Th isNumeric>Bet</Th>
-              <Th isNumeric>Odds</Th>
-              <Th isNumeric>Result</Th>
-              <Th textAlign="center">Status</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentBets.map((bet) => (
-              <Tr key={bet.id}>
-                <Td>{bet.date}</Td>
-                <Td>{bet.league}</Td>
-                <Td>{formatSide(bet)}</Td>
-                <Td isNumeric>{formatNumber(bet)}</Td>
-                <Td isNumeric>${bet.amount.toFixed(2)}</Td>
-                <Td isNumeric>{bet.odds}</Td>
-                <Td isNumeric>{formatProfitLoss(bet)}</Td>
-                <Td textAlign="center">{getResultBadge(bet)}</Td>
+      <Box minH={`${MIN_TABLE_HEIGHT}px`} mb={4} position="relative">
+        <Box minH={`${MIN_TABLE_HEIGHT - PAGINATION_HEIGHT}px`}>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Date</Th>
+                <Th>League</Th>
+                <Th>Side</Th>
+                <Th isNumeric>Number</Th>
+                <Th isNumeric>Bet</Th>
+                <Th isNumeric>Odds</Th>
+                <Th isNumeric>Result</Th>
+                <Th textAlign="center">Status</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {currentBets.map((bet) => (
+                <Tr key={bet.id}>
+                  <Td>{bet.date}</Td>
+                  <Td>{bet.league}</Td>
+                  <Td>{formatSide(bet)}</Td>
+                  <Td isNumeric>{formatNumber(bet)}</Td>
+                  <Td isNumeric>${bet.amount.toFixed(2)}</Td>
+                  <Td isNumeric>{bet.odds}</Td>
+                  <Td isNumeric>{formatProfitLoss(bet)}</Td>
+                  <Td textAlign="center">{getResultBadge(bet)}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
 
         {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <Box position="absolute" bottom={0} width="100%">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </Box>
         )}
       </Box>
     </>

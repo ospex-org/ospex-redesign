@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
@@ -31,14 +31,17 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
   hoveredTeam = null,
   selectedTeam = null,
 }) => {
+  const [chartHoveredTeam, setChartHoveredTeam] = useState<'A' | 'B' | null>(null);
+
   const getTeamColors = (team: 'A' | 'B') => {
     const teamName = team === 'A' ? teamAName : teamBName;
     const isHovered = hoveredTeam === team;
+    const isChartHovered = chartHoveredTeam === team;
     const isSelected = selectedTeam === team;
     
     // Special handling for Over/Under
     if (teamName === 'Over' || teamName === 'Under') {
-      if (isSelected) {
+      if (isSelected || isChartHovered) {
         return teamName === 'Over' ? BETTING_COLORS.OVER : BETTING_COLORS.UNDER;
       }
       if (isHovered) {
@@ -55,7 +58,7 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
       teamConfig.secondary : 
       teamConfig.primary;
     
-    if (isSelected) {
+    if (isSelected || isChartHovered) {
       return primaryColor;
     }
     if (isHovered) {
@@ -84,13 +87,49 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
     return (isHovered || isSelected) ? borderColor : 'rgba(0, 0, 0, 0.8)';
   };
 
+  const getHoverColor = (team: 'A' | 'B') => {
+    const teamName = team === 'A' ? teamAName : teamBName;
+    
+    // Special handling for Over/Under
+    if (teamName === 'Over' || teamName === 'Under') {
+      return teamName === 'Over' ? BETTING_COLORS.OVER : BETTING_COLORS.UNDER;
+    }
+    
+    const teamConfig = NFL_TEAMS[teamName];
+    if (!teamName || !teamConfig) return DEFAULT_COLORS[team];
+
+    return teamConfig.useSecondaryForDonut ? teamConfig.secondary : teamConfig.primary;
+  };
+
+  const getTeamBorderOnHover = (team: 'A' | 'B') => {
+    const teamName = team === 'A' ? teamAName : teamBName;
+    
+    // Special handling for Over/Under
+    if (teamName === 'Over' || teamName === 'Under') {
+      return 'rgba(0, 0, 0, 0.8)';  // Keep black border for Over/Under
+    }
+    
+    const teamConfig = NFL_TEAMS[teamName];
+    if (!teamName || !teamConfig) return 'rgba(0, 0, 0, 0.8)';
+    
+    // Use the opposite color for border (same as in getBorderColors)
+    return teamConfig.useSecondaryForDonut ? 
+      teamConfig.primary : 
+      teamConfig.secondary;
+  };
+
   const data = {
     labels: [teamBName, teamAName],
     datasets: [{
       data: [poolSizeB, poolSizeA],
       backgroundColor: [getTeamColors('B'), getTeamColors('A')],
       borderWidth: 2,
-      borderColor: [getBorderColors('B'), getBorderColors('A')]
+      borderColor: [getBorderColors('B'), getBorderColors('A')],
+      hoverBackgroundColor: [getHoverColor('B'), getHoverColor('A')],
+      hoverBorderColor: [
+        getTeamBorderOnHover('B'),
+        getTeamBorderOnHover('A')
+      ]
     }]
   };
 
@@ -106,6 +145,15 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
           label: (context: any) => {
             const teamAbbrev = NFL_TEAMS[context.label]?.abbreviation || context.label;
             return `${teamAbbrev}: $${context.raw.toLocaleString()}`;
+          },
+          labelColor: (context: any) => {
+            const team = context.dataIndex === 0 ? 'B' : 'A';
+            const color = getHoverColor(team);
+            return {
+              backgroundColor: color,
+              borderColor: getTeamBorderOnHover(team),
+              borderWidth: 2
+            };
           }
         }
       }
@@ -118,7 +166,10 @@ const BetPoolPieChart: React.FC<BetPoolPieChartProps> = ({
 
   return (
     <Box width={size} height={size}>
-      <Pie data={data} options={options} />
+      <Pie 
+        data={data} 
+        options={options}
+      />
     </Box>
   );
 };
